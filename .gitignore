@@ -1,0 +1,70 @@
+# -------------------------
+# Python
+# -------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# virtual environments (even if we don't use them now)
+.venv/
+venv/
+env/
+
+# pytest / coverage
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# -------------------------
+# Environment variables (VERY IMPORTANT)
+# -------------------------
+.env
+.env.*
+!.env.example
+
+# -------------------------
+# VSCode / IDE
+# -------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# -------------------------
+# Logs
+# -------------------------
+*.log
+logs/
+
+# -------------------------
+# OS junk
+# -------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# -------------------------
+# Docker
+# -------------------------
+docker-data/
+*.pid
+
+# -------------------------
+# Databases
+# -------------------------
+*.db
+*.sqlite3
+
+# -------------------------
+# Node (future React dashboard)
+# -------------------------
+node_modules/
+dist/
+.next/

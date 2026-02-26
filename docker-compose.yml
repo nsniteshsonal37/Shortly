@@ -1,0 +1,68 @@
+services:
+
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    ports:
+      - "8000:8000"
+    depends_on:
+      - auth-db
+    env_file:
+      - ./auth-service/.env
+    volumes:
+    - ./auth-service:/app
+
+  auth-db:
+    image: postgres:15
+    container_name: auth-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: authdb
+    ports:
+      - "5433:5432"
+    volumes:
+      - auth_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d authdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  url-db:
+    image: postgres:15
+    container_name: url-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: urldb
+    ports:
+      - "5434:5432"
+    volumes:
+      - url_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d urldb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  url-service:
+    build: ./url-service
+    container_name: url-service
+    ports:
+      - "8001:8000"
+    env_file:
+      - ./url-service/.env
+    depends_on:
+      url-db:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    volumes:
+      - ./url-service:/app
+
+volumes:
+  auth_postgres_data:
+  url_postgres_data:
