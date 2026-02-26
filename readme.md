@@ -39,7 +39,7 @@ Each service has its own PostgreSQL database and communicates over HTTP inside a
 
 ## Tech Stack
 
-- Python 3.13.12
+- Python 3.11
 - FastAPI
 - PostgreSQL
 - SQLAlchemy
