@@ -3,11 +3,16 @@ from app.api.routes_auth import router as auth_router
 from app.db.database import engine, Base
 import time
 from fastapi.middleware.cors import CORSMiddleware
+from prometheus_fastapi_instrumentator import Instrumentator
 
 app = FastAPI(title="Shortly Auth Service")
 
+Instrumentator().instrument(app).expose(app)
+
+
 origins = [
-    "http://localhost:5173",  # Vite frontend
+    "http://localhost:5173",
+    "http://100.83.168.130:5173",
 ]
 
 app.add_middleware(

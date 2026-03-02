@@ -1,0 +1,56 @@
+server:
+  http_listen_port: 9080
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+
+  - job_name: docker
+
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 5s
+
+    relabel_configs:
+
+      # use container name as service
+      - source_labels: ['__meta_docker_container_name']
+        regex: '/(.*)'
+        target_label: service
+
+      # also keep original container label
+      - source_labels: ['__meta_docker_container_name']
+        regex: '/(.*)'
+        target_label: container
+
+      # useful later
+      - source_labels: ['__meta_docker_container_image']
+        target_label: image
+
+    pipeline_stages:
+
+      - docker: {}
+
+      # Join Python tracebacks
+      - multiline:
+          firstline: '^(INFO|ERROR|WARNING|Traceback)'
+
+      # Parse FastAPI access logs
+      - regex:
+          expression: 'INFO: (?P<ip>[^:]+):(?P<port>\d+) - "(?P<method>\w+) (?P<path>[^ ]+) HTTP/[^"]+" (?P<status>\d+)'
+
+      - labels:
+          method:
+          path:
+          status:
+
+      # Extract error level
+      - regex:
+          expression: '^(?P<level>INFO|ERROR|WARNING)'
+
+      - labels:
+          level:

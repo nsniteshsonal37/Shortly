@@ -16,7 +16,8 @@ app = FastAPI(title="Shortly URL Service")
 Instrumentator().instrument(app).expose(app)
 
 origins = [
-    "http://localhost:5173",  # Vite frontend
+    "http://localhost:5173",
+    "http://100.83.168.130:5173",
 ]
 
 app.add_middleware(
