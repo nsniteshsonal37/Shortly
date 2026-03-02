@@ -55,6 +55,10 @@ desktop.ini
 # -------------------------
 docker-data/
 *.pid
+docker-data/
+postgres-data/
+grafana-data/
+prometheus-data/
 
 # -------------------------
 # Databases
