@@ -15,19 +15,18 @@ app = FastAPI(title="Shortly URL Service")
 
 Instrumentator().instrument(app).expose(app)
 
-origins = [
-    "http://localhost:5173",
-    "http://100.83.168.130:5173",
-    "https://shortlyfrontend.vercel.app/",
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://100.83.168.130:5173",
+    ],
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 app.state.limiter = limiter
 app.add_middleware(AuthContextMiddleware)
