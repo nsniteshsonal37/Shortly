@@ -52,6 +52,7 @@ EOF
             steps {
                 sh '''
 		export DOCKER_API_VERSION=1.41
+		cd /opt/shortly
 		docker-compose down || true
                 docker-compose up -d --build
 		'''
