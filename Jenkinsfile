@@ -52,8 +52,9 @@ EOF
             steps {
                 sh '''
 		export DOCKER_API_VERSION=1.41
+		export COMPOSE_PROJECT_NAME=shortly
 		cd /opt/shortly
-		docker-compose down || true
+		docker-compose down --remove-orphans || true
                 docker-compose up -d --build
 		'''
             }
