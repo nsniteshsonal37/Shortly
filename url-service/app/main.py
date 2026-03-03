@@ -43,6 +43,10 @@ def rate_limit_handler(request, exc):
 def root():
     return {"message": "URL Service is running"}
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
 @app.get("/test500")
 def boom():
     raise Exception("500")
