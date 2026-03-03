@@ -8,9 +8,14 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Pull Latest') {
             steps {
-                sh 'docker compose down'
+                sh 'git pull origin main'
+            }
+        }
+
+        stage('Rebuild Containers') {
+            steps {
                 sh 'docker compose up -d --build'
             }
         }
