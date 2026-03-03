@@ -12,6 +12,7 @@ pipeline {
         AUTH_SECRET_KEY = credentials('auth_secret_key')
         AUTH_ALGORITHM = credentials('auth_algorithm')
         AUTH_TOKEN_EXPIRE = credentials('auth_token_expire')
+        BUILD_NOTIFY_EMAIL = credentials('build_notification_email')
     }
 
     stages {
@@ -59,42 +60,76 @@ EOF
                 '''
             }
         }
- stage('Health Check') {
-    steps {
-        sh '''
-        set -e
 
-        echo "Checking URL service..."
-        for i in {1..10}; do
-          if curl -f http://localhost/health; then
-            echo "URL service healthy"
-            break
-          fi
-          if [ $i -eq 10 ]; then
-            echo "URL service failed health check"
-            exit 1
-          fi
-          echo "Retrying URL service..."
-          sleep 2
-        done
+        stage('Health Check') {
+            steps {
+                sh '''
+                set -e
 
-        echo "Checking Auth service..."
-        for i in {1..10}; do
-          if curl -f http://localhost/auth/health; then
-            echo "Auth service healthy"
-            break
-          fi
-          if [ $i -eq 10 ]; then
-            echo "Auth service failed health check"
-            exit 1
-          fi
-          echo "Retrying Auth service..."
-          sleep 2
-        done
+                echo "Checking URL service..."
+                for i in {1..10}; do
+                  if curl -f http://localhost/health; then
+                    echo "URL service healthy"
+                    break
+                  fi
+                  if [ $i -eq 10 ]; then
+                    echo "URL service failed health check"
+                    exit 1
+                  fi
+                  echo "Retrying URL service..."
+                  sleep 2
+                done
 
-        echo "All health checks passed."
-        '''
+                echo "Checking Auth service..."
+                for i in {1..10}; do
+                  if curl -f http://localhost/auth/health; then
+                    echo "Auth service healthy"
+                    break
+                  fi
+                  if [ $i -eq 10 ]; then
+                    echo "Auth service failed health check"
+                    exit 1
+                  fi
+                  echo "Retrying Auth service..."
+                  sleep 2
+                done
+
+                echo "All health checks passed."
+                '''
+            }
+        }
     }
-}
+
+    post {
+        failure {
+            emailext(
+                subject: "❌ FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """
+Build FAILED.
+
+Job: ${env.JOB_NAME}
+Build: ${env.BUILD_NUMBER}
+URL: ${env.BUILD_URL}
+
+Check logs immediately.
+""",
+                to: "${env.BUILD_NOTIFY_EMAIL}",
+                attachLog: true
+            )
+        }
+
+        unstable {
+            emailext(
+                subject: "⚠️ UNSTABLE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """
+Build is unstable.
+
+Job: ${env.JOB_NAME}
+Build: ${env.BUILD_NUMBER}
+URL: ${env.BUILD_URL}
+""",
+                to: "${env.BUILD_NOTIFY_EMAIL}"
+            )
+        }
     }
 }
