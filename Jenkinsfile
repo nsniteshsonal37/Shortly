@@ -51,13 +51,50 @@ EOF
         stage('Deploy') {
             steps {
                 sh '''
-		export DOCKER_API_VERSION=1.41
-		export COMPOSE_PROJECT_NAME=shortly
-		cd /opt/shortly
-		docker-compose down --remove-orphans || true
+                export DOCKER_API_VERSION=1.41
+                export COMPOSE_PROJECT_NAME=shortly
+                cd /opt/shortly
+                docker-compose down --remove-orphans || true
                 docker-compose up -d --build
-		'''
+                '''
             }
         }
+ stage('Health Check') {
+    steps {
+        sh '''
+        set -e
+
+        echo "Checking URL service..."
+        for i in {1..10}; do
+          if curl -f http://localhost/health; then
+            echo "URL service healthy"
+            break
+          fi
+          if [ $i -eq 10 ]; then
+            echo "URL service failed health check"
+            exit 1
+          fi
+          echo "Retrying URL service..."
+          sleep 2
+        done
+
+        echo "Checking Auth service..."
+        for i in {1..10}; do
+          if curl -f http://localhost/auth/health; then
+            echo "Auth service healthy"
+            break
+          fi
+          if [ $i -eq 10 ]; then
+            echo "Auth service failed health check"
+            exit 1
+          fi
+          echo "Retrying Auth service..."
+          sleep 2
+        done
+
+        echo "All health checks passed."
+        '''
+    }
+}
     }
 }
