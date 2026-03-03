@@ -13,7 +13,7 @@ async def verify_token(token: str):
     Calls the auth-service to verify a JWT token
     """
 
-    url = f"{AUTH_SERVICE_URL}/auth/verify"
+    url = f"{AUTH_SERVICE_URL}/verify"
 
     try:
         async with httpx.AsyncClient() as client:
