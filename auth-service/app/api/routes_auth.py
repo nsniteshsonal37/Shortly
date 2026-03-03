@@ -12,7 +12,7 @@ from app.schemas.token_schema import TokenVerifyRequest, TokenVerifyResponse
 from jose import jwt, JWTError
 import os
 
-router = APIRouter(prefix="/auth", tags=["Auth"])
+router = APIRouter(tags=["Auth"])
 
 
 @router.post("/register")
