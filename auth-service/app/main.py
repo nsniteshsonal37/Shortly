@@ -13,6 +13,7 @@ Instrumentator().instrument(app).expose(app)
 origins = [
     "http://localhost:5173",
     "http://100.83.168.130:5173",
+    "https://shortlyfrontend.vercel.app/",
 ]
 
 app.add_middleware(
