@@ -50,7 +50,10 @@ EOF
 
         stage('Deploy') {
             steps {
-                sh 'docker-compose up -d --build'
+                sh '''
+		export DOCKER_API_VERSION=1.41
+                docker-compose up -d --build
+		'''
             }
         }
     }
