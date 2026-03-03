@@ -24,6 +24,7 @@ app.add_middleware(
 )
 
 
+
 @app.get("/")
 def root():
     return {"message": "Shortly Auth Service is running"}
