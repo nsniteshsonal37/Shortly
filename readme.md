@@ -1,7 +1,9 @@
 # Shortly --- Microservices URL Shortener with DevOps Observability Stack
 
-Frontend: https://shortlyfrontend.vercel.app\
+Frontend: https://shortlyfrontend.vercel.app
+
 Frontend Repository:
+
 https://github.com/PawanKumar2001/Short.ly_front_end
 
 Shortly is a **production-style microservices URL shortener** designed
